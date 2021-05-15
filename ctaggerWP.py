@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from matplotlib.lines import Line2D
 import mplhep as hep, numpy as np
-from scipy.optimize import minimize
 hep.set_style(hep.style.CMS)
 
 parser = argparse.ArgumentParser("Measurement of c-tagger WPs")
