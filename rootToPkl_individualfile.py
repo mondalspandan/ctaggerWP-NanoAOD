@@ -1,48 +1,46 @@
 import os, sys
-import uproot 
+import uproot3 as uproot
 #import pyxrootd
-import pandas as pd 
-import numpy as np
+import pandas as pd, awkward as ak
+import numpy as np, pickle
 from glob import glob
 
 # di= "/pnfs/desy.de/cms/tier2//store/mc/RunIIFall17NanoAODv5/TTToHadronic_TuneCP5_PSweights_13TeV-powheg-pythia8/NANOAODSIM/PU2017_12Apr2018_Nano1June2019_new_pmx_102X_mc2017_realistic_v7-v1/"
 # flist17 = glob(di+"*/*.root")
 
 infile = sys.argv[1]
+maxjets = 3000000
+taggers = ["DeepFlav","PNet","RobustParTAK4"]
+outdir = "/eos/user/s/spmondal/ctagWP/2022"
+os.system("mkdir -p "+outdir)
 
 branches = [
-"Jet_btagDeepFlavC",
-"Jet_btagDeepFlavB",
-#"Jet_btagDeepFlavUDS",
-"Jet_btagDeepC",
-"Jet_btagDeepB",
 "Jet_pt",
-"Jet_btagCMVA",
-"Jet_btagCSVV2",
-#"GenJet_hadronFlavour",
-"Jet_qgl",
 "Jet_hadronFlavour",
 "Jet_partonFlavour",
 "Jet_jetId",
-"Jet_puId",
+# "Jet_puId",   # Run 2/CHS only
 "Jet_eta",
 "Jet_phi"]
 
-outdir = "/nfs/dust/cms/user/spmondal/ROOTtoPKL/ctagWP"
-os.system("mkdir -p "+outdir)
+for tag in taggers:
+    for suff in ["B","CvL","CvB","C"]:                 # Remove "C" for stock Nano
+        if tag=="PNet" and suff=="C": suff = "ProbC"
+        branches.append("Jet_btag%s%s"%(tag,suff))
+print (branches)
 
-outf = "%s/%s.pkl"%(outdir,infile.split("/")[-1].rstrip('.root'))
+outf = "%s/%s.pkl"%(outdir,infile.split("/")[-1].rstrip('.root').replace('*','_'))
 
 sumdf = pd.DataFrame()
-for df in uproot.iterate(infile, 'Events', 
+for df in uproot.iterate(infile,'Events', 
     branches,
     entrysteps=300000,
-    flatten=True,
-    outputtype=pd.DataFrame
-                        ):
-    
-    print(df.shape)
-    sumdf = pd.concat([sumdf, df])
+    outputtype=pd.DataFrame,
+    flatten=True):   
 
-print "Total:", sumdf.shape
-sumdf.to_pickle(outf) 
+    sumdf = pd.concat([sumdf, df])    
+    print("Added %d, total %d"%(df.shape[0],sumdf.shape[0]))
+    if sumdf.shape[0] > maxjets: break
+
+print ("Total:", sumdf.shape[0])
+pickle.dump(sumdf,open(outf,"wb"))
