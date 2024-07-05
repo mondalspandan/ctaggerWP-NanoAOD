@@ -15,7 +15,7 @@ parser.add_argument('-i','--inputdir',type=str,default="/mnt/c/Work/ctaggerWP/",
 parser.add_argument('-f','--inputfile',type=str,default="",help="Input file name.")
 parser.add_argument('-s','--skipseeds',action="store_true",default=False,help="Skip 1D scans that identify starting points for 2D scans.")
 parser.add_argument('-p','--plotoldresults',action="store_true",default=False,help="Only plot stored results, skip everything else.")
-parser.add_argument('-o','--outname',type=str,default="2022")
+parser.add_argument('-o','--outname',type=str,default="2023")
 parser.add_argument('-n','--njets',type=str,default="-1",help="Maximum number of jets to process.")
 args = parser.parse_args()
 print (args)
@@ -56,9 +56,9 @@ def getTaggers(df):
     df['truthc'] = (df['Jet_hadronFlavour'] == 4).astype(int)
     df['truthudsg'] = (df['Jet_hadronFlavour'] < 4).astype(int)
 
-    df['Jet_btagPNetC'] = df['Jet_btagPNetProbC']
-    for tag in taggers:
-        df["Jet_btag"+tag+"CvsUDSGL"] = df["Jet_btag"+tag+"C"]/(1-df["Jet_btag"+tag+"B"])
+ #   df['Jet_btagPNetC'] = df['Jet_btagPNetProbC']
+ #   for tag in taggers:
+ #       df["Jet_btag"+tag+"CvsUDSGL"] = df["Jet_btag"+tag+"C"]/(1-df["Jet_btag"+tag+"B"])
     
     # df['dCvL'] = df['Jet_btagDeepC']/(1 - df['Jet_btagDeepB'])
     # df['dCvB'] = df['Jet_btagDeepC']/(df['Jet_btagDeepC'] + df['Jet_btagDeepB'])
@@ -88,6 +88,7 @@ mistags = {
     'Loose':  {'b':.35,'udsg':.9},
     'Medium': {'b':.25,'udsg':.25},
     'Tight':  {'b':.20,'udsg':.03},
+    'XT':     {'b':.10,'udsg':.01},
 }
 
 # Manual seeds, e.g., from a previous campaign. Overwritten by next section
@@ -104,11 +105,22 @@ mistags = {
 # seeds = {'Loose': {'d': {'cvl': 0.1, 'cvb': 0.22}, 'df': {'cvl': 0.05, 'cvb': 0.32}}, 'Medium': {'d': {'cvl': 0.19, 'cvb': 0.35000000000000003}, 'df': {'cvl': 0.11, 'cvb': 0.49}}, 'Tight': {'d': {'cvl': 0.43, 'cvb': 0.43}, 'df': {'cvl': 0.29, 'cvb': 0.58}}}
 
 #2022EE
-seeds = {'Loose': {'Jet_btagDeepFlav': {'cvl': 0.041999999999999996, 'cvb': 0.207}, 'Jet_btagPNet': {'cvl': 0.05399999999999999, 'cvb': 0.183}, 'Jet_btagRobustParTAK4': {'cvl': 0.03874999999999999, 'cvb': 0.06799999999999999}}, 'Medium': {'Jet_btagDeepFlav': {'cvl': 0.10749999999999998, 'cvb': 0.29999999999999993}, 'Jet_btagPNet': {'cvl': 0.16, 'cvb': 0.3069999999999999}, 'Jet_btagRobustParTAK4': {'cvl': 0.11649999999999999, 'cvb': 0.12999999999999992}}, 'Tight': {'Jet_btagDeepFlav': {'cvl': 0.3, 'cvb': 0.24399999999999977}, 'Jet_btagPNet': {'cvl': 0.485, 'cvb': 0.2619999999999998}, 'Jet_btagRobustParTAK4': {'cvl': 0.3535, 'cvb': 0.09799999999999981}}}
+#seeds = {'Loose': {'Jet_btagDeepFlav': {'cvl': 0.041999999999999996, 'cvb': 0.207}, 'Jet_btagPNet': {'cvl': 0.05399999999999999, 'cvb': 0.183}, 'Jet_btagRobustParTAK4': {'cvl': 0.03874999999999999, 'cvb': 0.06799999999999999}}, 'Medium': {'Jet_btagDeepFlav': {'cvl': 0.10749999999999998, 'cvb': 0.29999999999999993}, 'Jet_btagPNet': {'cvl': 0.16, 'cvb': 0.3069999999999999}, 'Jet_btagRobustParTAK4': {'cvl': 0.11649999999999999, 'cvb': 0.12999999999999992}}, 'Tight': {'Jet_btagDeepFlav': {'cvl': 0.3, 'cvb': 0.24399999999999977}, 'Jet_btagPNet': {'cvl': 0.485, 'cvb': 0.2619999999999998}, 'Jet_btagRobustParTAK4': {'cvl': 0.3535, 'cvb': 0.09799999999999981}}}
 
 #2022
-# seeds = {'Loose': {'Jet_btagDeepFlav': {'cvl': 0.041999999999999996, 'cvb': 0.207}, 'Jet_btagPNet': {'cvl': 0.05099999999999999, 'cvb': 0.181}, 'Jet_btagRobustParTAK4': {'cvl': 0.03874999999999999, 'cvb': 0.06799999999999999}}, 'Medium': {'Jet_btagDeepFlav': {'cvl': 0.10749999999999998, 'cvb': 0.29999999999999993}, 'Jet_btagPNet': {'cvl': 0.1525, 'cvb': 0.3029999999999999}, 'Jet_btagRobustParTAK4': {'cvl': 0.11649999999999999, 'cvb': 0.12999999999999992}}, 'Tight': {'Jet_btagDeepFlav': {'cvl': 0.2935, 'cvb': 0.30999999999999983}, 'Jet_btagPNet': {'cvl': 0.45899999999999996, 'cvb': 0.3599999999999999}, 'Jet_btagRobustParTAK4': {'cvl': 0.352, 'cvb': 0.12999999999999984}}}
+#seeds = {'Loose': {'Jet_btagDeepFlav': {'cvl': 0.041999999999999996, 'cvb': 0.207}, 'Jet_btagPNet': {'cvl': 0.05099999999999999, 'cvb': 0.181}, 'Jet_btagRobustParTAK4': {'cvl': 0.03874999999999999, 'cvb': 0.06799999999999999}}, 'Medium': {'Jet_btagDeepFlav': {'cvl': 0.10749999999999998, 'cvb': 0.29999999999999993}, 'Jet_btagPNet': {'cvl': 0.1525, 'cvb': 0.3029999999999999}, 'Jet_btagRobustParTAK4': {'cvl': 0.11649999999999999, 'cvb': 0.12999999999999992}}, 'Tight': {'Jet_btagDeepFlav': {'cvl': 0.2935, 'cvb': 0.30999999999999983}, 'Jet_btagPNet': {'cvl': 0.45899999999999996, 'cvb': 0.3599999999999999}, 'Jet_btagRobustParTAK4': {'cvl': 0.352, 'cvb': 0.12999999999999984}}}
 
+#NanoAODv11 2022
+#seeds = {'Loose': {'Jet_btagDeepFlav': {'cvl': 0.03668749999999999, 'cvb': 0.27681249999999996}}, 'Medium': {'Jet_btagDeepFlav': {'cvl': 0.09838867560029031, 'cvb': 0.36874999999999997}}, 'Tight': {'Jet_btagDeepFlav': {'cvl': 0.33549999999999996, 'cvb': 0.31199999999999983}}}
+
+#NanoAODv11 2022EE
+#seeds = {'Loose': {'Jet_btagDeepFlav': {'cvl': 0.03665161319077015, 'cvb': 0.27731249999999996}}, 'Medium': {'Jet_btagDeepFlav': {'cvl': 0.09812499999999982, 'cvb': 0.37024999999999997}}, 'Tight': {'Jet_btagDeepFlav': {'cvl': 0.33549999999999996, 'cvb': 0.31249999999999983}}}
+
+#2023
+# seeds = {'Loose': {'Jet_btagDeepFlav': {'cvl': 0.04183593750000002, 'cvb': 0.23450000000000001}, 'Jet_btagPNet': {'cvl': 0.052089843749999996, 'cvb': 0.22050000000000003}, 'Jet_btagRobustParTAK4': {'cvl': 0.0380859375, 'cvb': 0.08650000000000001}}, 'Medium': {'Jet_btagDeepFlav': {'cvl': 0.10192187499999998, 'cvb': 0.32199999999999995}, 'Jet_btagPNet': {'cvl': 0.1480703125000003, 'cvb': 0.3529999999999999}, 'Jet_btagRobustParTAK4': {'cvl': 0.10924999999999999, 'cvb': 0.15274999999999994}}, 'Tight': {'Jet_btagDeepFlav': {'cvl': 0.24999999999999994, 'cvb': 0.2619999999999998}, 'Jet_btagPNet': {'cvl': 0.43399999999999994, 'cvb': 0.2999999999999989}, 'Jet_btagRobustParTAK4': {'cvl': 0.30849999999999994, 'cvb': 0.11274999999999982}}, 'XT': {'Jet_btagDeepFlav': {'cvl': 0.37099999999999994, 'cvb': 0.4405000000000001}, 'Jet_btagPNet': {'cvl': 0.634499999999997, 'cvb': 0.5490000000000002}, 'Jet_btagRobustParTAK4': {'cvl': 0.469, 'cvb': 0.2750000000000001}}}
+
+#2023BPix
+seeds = {'Loose': {'Jet_btagDeepFlav': {'cvl': 0.04186718750000002, 'cvb': 0.24200000000000002}, 'Jet_btagPNet': {'cvl': 0.052214843749999997, 'cvb': 0.22800000000000004}, 'Jet_btagRobustParTAK4': {'cvl': 0.038101562500000005, 'cvb': 0.09125000000000001}}, 'Medium': {'Jet_btagDeepFlav': {'cvl': 0.10204687499999998, 'cvb': 0.32799999999999996}, 'Jet_btagPNet': {'cvl': 0.14869531250000032, 'cvb': 0.3582499999999999}, 'Jet_btagRobustParTAK4': {'cvl': 0.1095581091940403, 'cvb': 0.15749999999999995}}, 'Tight': {'Jet_btagDeepFlav': {'cvl': 0.25049999999999994, 'cvb': 0.26674999999999977}, 'Jet_btagPNet': {'cvl': 0.43599999999999994, 'cvb': 0.3029999999999989}, 'Jet_btagRobustParTAK4': {'cvl': 0.30849999999999994, 'cvb': 0.11574999999999983}}, 'XT': {'Jet_btagDeepFlav': {'cvl': 0.37099999999999994, 'cvb': 0.4440000000000001}, 'Jet_btagPNet': {'cvl': 0.634499999999997, 'cvb': 0.5520000000000002}, 'Jet_btagRobustParTAK4': {'cvl': 0.469, 'cvb': 0.2805000000000001}}}
 
 #1D scans
 if not args.skipseeds and not args.plotoldresults:
@@ -248,11 +260,12 @@ for tag_ in  taggers:
     plt.ylabel(tag + " " + yname)
     plt.ylim(0.,1.35)
     plt.xlim(0.,1.)
+    patches.append(mpatches.Patch(color="white", label='', alpha=0))
     
     hep.cms.label(rlabel="%s (13.6 TeV)"%args.outname)
 
     ax = plt.gca()
-    for wp,c in zip(results[pref],['cyan','yellow','magenta']):
+    for wp,c in zip(results[pref],['cyan','#F9FBB2','magenta','#7C6354','#0e3b43']):
         cvsl,cvsb,ceff = results[pref][wp]
         rect = mpatches.Rectangle((cvsl,cvsb), 1-cvsl, 1-cvsb, linewidth=3, linestyle='--', edgecolor=c, facecolor='none')
         if wp == "Medium": t = plt.text(cvsl+0.005,cvsb+0.01,"c eff = %.1f%%"%(ceff*100),color='black',ha='left',va='bottom',size=15)
@@ -275,3 +288,34 @@ for tag_ in  taggers:
 print()
 print("Seeds to hardcode for future:")
 print(newseeds)
+
+
+
+# Write yaml
+def yamlname(st):
+    yamldict = {
+        "Loose" : "L",
+        "Medium": "M",
+        "Tight" : "T",
+        "Jet_btagDeepFlav" :    "deepJet",
+        "Jet_btagPNet"      :   "particleNet",
+        "Jet_btagRobustParTAK4":"robustParticleTransformer"
+    }
+    if st in yamldict: st = yamldict[st]
+    return st
+
+yamlfile = f"wp_database_ctagging_{args.outname}.yml"
+outfl = open(yamlfile,'w')
+for tag in results:
+    outfl.write(yamlname(tag)+":\n")
+    for wp in results[tag]:
+        outfl.write("    "+yamlname(wp)+":\n")
+        lst = results[tag][wp]
+        outfl.write(f"        eff: {lst[2]*100:.1f}\n")
+        outfl.write(f"        CvL: {lst[0]:.3f}\n")
+        outfl.write(f"        CvB: {lst[1]:.3f}\n")
+
+outfl.close()
+
+print()
+print("Wrote yaml file",yamlfile)

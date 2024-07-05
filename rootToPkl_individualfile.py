@@ -11,7 +11,7 @@ from glob import glob
 infile = sys.argv[1]
 maxjets = 3000000
 taggers = ["DeepFlav","PNet","RobustParTAK4"]
-outdir = "/eos/user/s/spmondal/ctagWP/2022"
+outdir = "/eos/user/s/spmondal/ctagWP/2023BPix"
 os.system("mkdir -p "+outdir)
 
 branches = [
@@ -24,7 +24,7 @@ branches = [
 "Jet_phi"]
 
 for tag in taggers:
-    for suff in ["B","CvL","CvB","C"]:                 # Remove "C" for stock Nano
+    for suff in ["B","CvL","CvB"]:                 # Remove "C" for stock Nano
         if tag=="PNet" and suff=="C": suff = "ProbC"
         branches.append("Jet_btag%s%s"%(tag,suff))
 print (branches)
