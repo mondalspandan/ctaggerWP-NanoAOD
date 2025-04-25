@@ -15,7 +15,7 @@ parser.add_argument('-i','--inputdir',type=str,default="/mnt/c/Work/ctaggerWP/",
 parser.add_argument('-f','--inputfile',type=str,default="",help="Input file name.")
 parser.add_argument('-s','--skipseeds',action="store_true",default=False,help="Skip 1D scans that identify starting points for 2D scans.")
 parser.add_argument('-p','--plotoldresults',action="store_true",default=False,help="Only plot stored results, skip everything else.")
-parser.add_argument('-o','--outname',type=str,default="2023")
+parser.add_argument('-o','--outname',type=str,default="2024v15")
 parser.add_argument('-n','--njets',type=str,default="-1",help="Maximum number of jets to process.")
 args = parser.parse_args()
 print (args)
@@ -27,11 +27,12 @@ else:
     filelist = [args.inputfile]
 
 df = pd.DataFrame()
-taggers = ["DeepFlav","PNet","RobustParTAK4"]
+taggers = ["UParTAK4"] #"PNet"] #"DeepFlav","PNet","RobustParTAK4"]
 tagname = {
-    "DeepFlav" : "DeepJet",
-    "PNet" : "ParticleNet",
-    "RobustParTAK4" : "Robust ParT"
+#    "DeepFlav" : "DeepJet",
+#    "PNet" : "ParticleNet",
+#    "RobustParTAK4" : "Robust ParT",
+    "UParTAK4" : "UParT"
 }
 xax = "CvL"
 yax = "CvB"
@@ -45,9 +46,13 @@ for fl in filelist:
 
 def cleandf(tdf):
     cdf = tdf
+    print(tdf.shape)
     # cdf = tdf[(tdf['Jet_btagDeepFlavB'] < 1) & (tdf['Jet_btagDeepFlavB'] > 0)]
+    if "Jet_jetId" not in cdf.keys():
+        cdf["Jet_jetId"] = ((cdf["Jet_neHEF"] < 0.99) & (cdf["Jet_neEmEF"] < 0.9) & (cdf["Jet_chMultiplicity"]+cdf["Jet_neMultiplicity"] > 1) & (cdf["Jet_chHEF"] > 0.01) & (cdf["Jet_chMultiplicity"] > 0)) * 5
     cdf = cdf[ (cdf['Jet_pt'] > 20)  & (abs(cdf['Jet_eta']) < 2.5) & (cdf['Jet_jetId'] >= 5)]
     njets = int(args.njets)
+    print(cdf.shape)
     if njets > 0: cdf = cdf[:njets]    
     return cdf
 
@@ -241,7 +246,11 @@ print("results =",results)
 
 #Plot
 ncjets = df[df['truthc']==1].shape[0]
+nbjets = df[df['truthb']==1].shape[0]
+nljets = df[df['truthudsg']==1].shape[0]
 print ("Total c jets:",ncjets)
+print ("Total b jets:",nbjets)
+print ("Total udsg jets:",nljets)
 
 newseeds = {}
 
